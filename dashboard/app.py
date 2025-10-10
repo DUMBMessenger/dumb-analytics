@@ -127,7 +127,7 @@ def index():
             'id': r[0], 'timestamp': r[1], 'type': r[2], 'device_id': r[3], 'data': data
         })
 
-    return render_template('index.html', counts=counts, items=items)
+    return render_template('index.html', counts=counts, items=items, is_admin=session.get('is_admin'))
 
 
 @app.route('/inspect/<int:item_id>')

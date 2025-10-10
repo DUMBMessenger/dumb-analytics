@@ -96,8 +96,8 @@ body.dark tbody tr:hover { background: rgba(255,255,255,0.05); }
 
 <div class="card">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-    <a href="{{ url_for('index') }}" class="button">← к дашборду</a>
-    <a href="{{ url_for('add_user') }}" class="button">Добавить пользователя</a>
+    <a href="{{ url_for('index') }}" class="button">← back to dashboard</a>
+    <a href="{{ url_for('add_user') }}" class="button">Add user</a>
   </div>
 
   <table>
@@ -113,7 +113,7 @@ body.dark tbody tr:hover { background: rgba(255,255,255,0.05); }
       <tr>
         <td>{{ u[0] }}</td>
         <td>{{ u[1] }}</td>
-        <td>{{ 'Да' if u[2] else 'Нет' }}</td>
+        <td>{{ 'Yes' if u[2] else 'No' }}</td>
       </tr>
       {% endfor %}
     </tbody>

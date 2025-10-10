@@ -36,17 +36,37 @@ header {
 
 h1 { margin: 0; font-size: 1.8em;}
 
-button.theme-toggle {
+
+.header-buttons {
+  display: flex;
+  gap: 10px; /* расстояние между кнопками */
+  align-items: center;
+}
+
+.header-buttons button,
+.header-buttons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;       /* фиксированная высота кнопки */
+  padding: 0 14px;    /* только горизонтальные отступы */
   background: var(--primary);
   border: none;
   color: #fff;
-  padding: 8px 14px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
+  text-decoration: none;
+  line-height: 1;
+  font-size: 0.9em;
   transition: all 0.3s;
 }
-button.theme-toggle:hover { background: var(--secondary); transform: scale(1.05); }
+
+.header-buttons button:hover,
+.header-buttons a:hover {
+  background: var(--secondary);
+  transform: scale(1.05);
+}
 
 .card {
   border: none;
@@ -97,7 +117,13 @@ tbody tr { animation: slideFadeIn 0.5s ease forwards;}
 <body>
 <header>
   <h1>dumb analytics dashboard</h1>
-  <button class="theme-toggle">theme toggle</button>
+  <div class="header-buttons">
+    <button class="theme-toggle">theme toggle</button>
+    {% if is_admin %}
+      <a href="{{ url_for('admin_panel') }}" class="admin-button">Admin panel</a>
+    {% endif %}
+    <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+  </div>
 </header>
 
 <div class="cards-container">

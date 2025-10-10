@@ -5,7 +5,7 @@ It consists of two parts: a **dashboard** (frontend) and an **API** for collecti
 
 ---
 
-## 🚀 Installation
+## Installation
 
 1. Install Python (recommended 3.10+)
 2. Clone the repository
