@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>dumb analytics login</title>
+<style>
+:root {
+  --bg-light: #f4f4f9;
+  --card-light: #fff;
+  --text-light: #111;
+  --bg-dark: #1e1e2f;
+  --card-dark: #2a2a3b;
+  --text-dark: #eee;
+  --primary: #4f46e5;
+  --secondary: #6366f1;
+  --danger: #ef4444;
+}
+
+body {
+  font-family: system-ui, 'Segoe UI', Roboto, Arial;
+  margin: 0;
+  padding: 20px;
+  transition: background 0.3s, color 0.3s;
+}
+
+body.light { background: var(--bg-light); color: var(--text-light);}
+body.dark { background: var(--bg-dark); color: var(--text-dark);}
+
+.container {
+  max-width: 400px;
+  margin: 50px auto;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+h2 { margin-bottom: 20px; }
+
+button.theme-toggle {
+  background: var(--primary);
+  border: none;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+button.theme-toggle:hover { background: var(--secondary); transform: scale(1.05); }
+
+.card {
+  background: var(--card-light);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+  transition: background 0.3s, color 0.3s, transform 0.2s;
+}
+body.dark .card { background: var(--card-dark); color: var(--text-dark); }
+
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 1em;
+  transition: border 0.3s, background 0.3s;
+}
+body.dark input[type=text], body.dark input[type=password] {
+  background: #333;
+  border: 1px solid #555;
+  color: #eee;
+}
+input[type=text]:focus, input[type=password]:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+button.submit-btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+button.submit-btn:hover { background: var(--secondary); transform: scale(1.05); }
+
+.alert {
+  background: var(--danger);
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+</style>
+</head>
+<body>
+<header>
+  <button class="theme-toggle">theme toggle</button>
+</header>
+
+<div class="container">
+  <div class="card">
+    <h2>Login</h2>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert">{{ messages[0] }}</div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post">
+      <label>Login</label>
+      <input type="text" name="username" required>
+
+      <label>Password</label>
+      <input type="password" name="password" required>
+
+      <button class="submit-btn">Log in</button>
+    </form>
+  </div>
+</div>
+
+<script>
+const body = document.body;
+const toggle = document.querySelector('.theme-toggle');
+const savedTheme = localStorage.getItem('theme') || 'light';
+body.classList.add(savedTheme);
+
+toggle.addEventListener('click', () => {
+  const newTheme = body.classList.contains('light') ? 'dark' : 'light';
+  body.classList.replace(body.classList.contains('light') ? 'light' : 'dark', newTheme);
+  localStorage.setItem('theme', newTheme);
+});
+</script>
+</body>
+</html>

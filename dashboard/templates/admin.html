@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>dumb analytics - admin panel</title>
+<style>
+:root {
+  --bg-light: #f4f4f9;
+  --card-light: #fff;
+  --text-light: #111;
+  --bg-dark: #1e1e2f;
+  --card-dark: #2a2a3b;
+  --text-dark: #eee;
+  --primary: #4f46e5;
+  --secondary: #6366f1;
+  --success: #10b981;
+  --button-bg: #4f46e5;
+}
+
+body {
+  font-family: system-ui, 'Segoe UI', Roboto, Arial;
+  margin: 20px;
+  transition: background 0.3s, color 0.3s;
+}
+
+body.light { background: var(--bg-light); color: var(--text-light);}
+body.dark { background: var(--bg-dark); color: var(--text-dark); }
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+h2 { margin: 0; }
+
+button.theme-toggle {
+  background: var(--primary);
+  border: none;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+button.theme-toggle:hover { background: var(--secondary); transform: scale(1.05); }
+
+.card {
+  background: var(--card-light);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+  transition: background 0.3s, color 0.3s, transform 0.2s;
+}
+body.dark .card { background: var(--card-dark); color: var(--text-dark); }
+
+a.button {
+  background: var(--success);
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+a.button:hover { background: #0f9e6f; transform: scale(1.05); }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+th, td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+tbody tr:nth-child(even) { background: rgba(0,0,0,0.03);}
+body.dark tbody tr:nth-child(even) { background: rgba(255,255,255,0.05); }
+tbody tr:hover { background: rgba(0,0,0,0.05); }
+body.dark tbody tr:hover { background: rgba(255,255,255,0.05); }
+
+</style>
+</head>
+<body>
+<header>
+  <h2>dumb analytics admin panel</h2>
+  <button class="theme-toggle">theme toggle</button>
+</header>
+
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+    <a href="{{ url_for('index') }}" class="button">← к дашборду</a>
+    <a href="{{ url_for('add_user') }}" class="button">Добавить пользователя</a>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Login</th>
+        <th>Admin</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{ u[0] }}</td>
+        <td>{{ u[1] }}</td>
+        <td>{{ 'Да' if u[2] else 'Нет' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+const body = document.body;
+const toggle = document.querySelector('.theme-toggle');
+const savedTheme = localStorage.getItem('theme') || 'light';
+body.classList.add(savedTheme);
+
+toggle.addEventListener('click', () => {
+  const newTheme = body.classList.contains('light') ? 'dark' : 'light';
+  body.classList.replace(body.classList.contains('light') ? 'light' : 'dark', newTheme);
+  localStorage.setItem('theme', newTheme);
+});
+</script>
+</body>
+</html>

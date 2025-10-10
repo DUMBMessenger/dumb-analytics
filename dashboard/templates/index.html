@@ -1,0 +1,201 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>dumb analytics dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+  --bg-light: #f4f4f9;
+  --card-light: #fff;
+  --text-light: #111;
+  --bg-dark: #1e1e2f;
+  --card-dark: #2a2a3b;
+  --text-dark: #eee;
+  --primary: #4f46e5;
+  --secondary: #6366f1;
+  --accent: #10b981;
+  --hover: rgba(0,0,0,0.05);
+}
+
+body {
+  font-family: system-ui, 'Segoe UI', Roboto, Arial;
+  margin: 20px;
+  transition: background 0.3s, color 0.3s;
+}
+
+body.light { background: var(--bg-light); color: var(--text-light);}
+body.dark { background: var(--bg-dark); color: var(--text-dark);}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+h1 { margin: 0; font-size: 1.8em;}
+
+button.theme-toggle {
+  background: var(--primary);
+  border: none;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+button.theme-toggle:hover { background: var(--secondary); transform: scale(1.05); }
+
+.card {
+  border: none;
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+  transition: background 0.3s, color 0.3s, transform 0.2s;
+}
+.card:hover { transform: translateY(-4px); }
+
+body.light .card { background: var(--card-light); color: var(--text-light);}
+body.dark .card { background: var(--card-dark); color: var(--text-dark);}
+
+.cards-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+td, th {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+tbody tr:nth-child(even) { background: rgba(0,0,0,0.03);}
+body.dark tbody tr:nth-child(even) { background: rgba(255,255,255,0.05);}
+tbody tr:hover { background: var(--hover);}
+
+a { color: var(--primary); text-decoration: none;}
+a:hover { text-decoration: underline; }
+
+pre { background: rgba(0,0,0,0.05); padding: 10px; border-radius: 8px; overflow-x: auto;}
+body.dark pre { background: rgba(255,255,255,0.1);}
+
+@keyframes slideFadeIn {0%{opacity:0;transform:translateY(-10px);}100%{opacity:1;transform:translateY(0);}}
+tbody tr { animation: slideFadeIn 0.5s ease forwards;}
+</style>
+</head>
+<body>
+<header>
+  <h1>dumb analytics dashboard</h1>
+  <button class="theme-toggle">theme toggle</button>
+</header>
+
+<div class="cards-container">
+{% for key, value in counts.items() %}
+<div class="card" style="flex:1 1 220px;">
+  <h4>{{ key }}</h4>
+  <canvas id="chart-{{ key }}"></canvas>
+  <p style="text-align:center;font-size:0.9em;color:gray;">{{ value }}</p>
+</div>
+{% endfor %}
+</div>
+
+<div class="card">
+<h3>recent</h3>
+<table>
+<thead>
+<tr>
+  <th>id</th>
+  <th>ts</th>
+  <th>type</th>
+  <th>device</th>
+  <th>trend</th>
+  <th>actions</th>
+</tr>
+</thead>
+<tbody>
+{% for it in items %}
+<tr>
+  <td>{{ it.id }}</td>
+  <td>{{ it.timestamp }}</td>
+  <td>{{ it.type }}</td>
+  <td>{{ it.device_id }}</td>
+  <td><canvas id="trend-{{ it.id }}" width="100" height="30"></canvas></td>
+  <td><a href="/inspect/{{ it.id }}">inspect</a></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+<script>
+const body = document.body;
+const toggle = document.querySelector('.theme-toggle');
+const savedTheme = localStorage.getItem('theme') || 'light';
+body.classList.add(savedTheme);
+
+toggle.addEventListener('click', () => {
+  const newTheme = body.classList.contains('light') ? 'dark' : 'light';
+  body.classList.replace(body.classList.contains('light') ? 'light':'dark', newTheme);
+  localStorage.setItem('theme', newTheme);
+});
+
+{% for key, value in counts.items() %}
+new Chart(document.getElementById('chart-{{ key }}'), {
+    type: 'bar',
+    data: {
+        labels: [''],
+        datasets: [{
+            label: '{{ key }}',
+            data: [{{ value }}],
+            backgroundColor: 'rgba(79,70,229,0.7)',
+            borderRadius: 6,
+            barThickness: 24
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false }, tooltip:{enabled:true} },
+        scales: { x:{display:false}, y:{display:false} }
+    }
+});
+{% endfor %}
+
+{% for it in items %}
+new Chart(document.getElementById('trend-{{ it.id }}'), {
+    type: 'line',
+    data: {
+        labels: [1,2,3,4,5],
+        datasets: [{
+            data: [{{ it.trend|join(',') if it.trend else "0,1,2,1,0" }}],
+            borderColor: 'rgba(79,70,229,0.8)',
+            backgroundColor: 'rgba(79,70,229,0.2)',
+            tension: 0.4,
+            fill: true,
+            pointRadius: 0
+        }]
+    },
+    options: {
+        responsive: false,
+        plugins: { legend: { display: false }, tooltip:{enabled:true} },
+        scales: { x:{display:false}, y:{display:false} },
+        elements: { line:{borderWidth:2} }
+    }
+});
+{% endfor %}
+
+// авто-рефреш каждые 60с
+setInterval(()=>location.reload(),60000);
+</script>
+</body>
+</html>

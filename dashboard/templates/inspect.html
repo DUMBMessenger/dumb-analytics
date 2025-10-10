@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>dumb analytics — inspect {{ item.id }}</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+  --bg-light: #f4f4f9;
+  --card-light: #fff;
+  --text-light: #111;
+  --bg-dark: #1e1e2f;
+  --card-dark: #2a2a3b;
+  --text-dark: #eee;
+  --primary: #4f46e5;
+  --secondary: #6366f1;
+  --accent: #10b981;
+}
+
+body {
+  font-family: system-ui, 'Segoe UI', Roboto, Arial;
+  margin: 20px;
+  transition: background 0.3s, color 0.3s;
+}
+
+body.light { background: var(--bg-light); color: var(--text-light);}
+body.dark { background: var(--bg-dark); color: var(--text-dark);}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+button.theme-toggle {
+  background: var(--primary);
+  border: none;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+button.theme-toggle:hover { background: var(--secondary); transform: scale(1.05); }
+
+.card {
+  background: var(--card-light);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+  transition: background 0.3s, color 0.3s;
+}
+body.dark .card { background: var(--card-dark); color: var(--text-dark);}
+
+pre {
+  background: rgba(0,0,0,0.05);
+  padding: 12px;
+  border-radius: 8px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  transition: background 0.3s;
+}
+body.dark pre { background: rgba(255,255,255,0.1); }
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+a:hover { text-decoration: underline; }
+
+footer {
+  margin-top: 30px;
+  text-align: center;
+  font-size: 0.9em;
+  opacity: 0.7;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>inspect: item {{ item.id }}</h1>
+  <button class="theme-toggle">theme toggle</button>
+</header>
+
+<div class="card">
+  <h3>overview</h3>
+  <p><b>type:</b> {{ item.type }}</p>
+  <p><b>device:</b> {{ item.device_id }}</p>
+  <p><b>timestamp:</b> {{ item.timestamp }}</p>
+</div>
+
+<div class="card">
+  <h3>data</h3>
+  <pre>{{ item.data | tojson(indent=2) }}</pre>
+</div>
+
+{% if item.trend %}
+<div class="card">
+  <h3>trend</h3>
+  <canvas id="trendChart" height="100"></canvas>
+</div>
+{% endif %}
+
+<p><a href="/">← back to dashboard</a></p>
+
+<footer>powered by dumb analytics</footer>
+
+<script>
+const body = document.body;
+const toggle = document.querySelector('.theme-toggle');
+
+// применяем сохранённую тему
+const savedTheme = localStorage.getItem('theme') || 'light';
+body.classList.add(savedTheme);
+
+// переключение темы
+toggle.addEventListener('click', () => {
+  const newTheme = body.classList.contains('light') ? 'dark' : 'light';
+  body.classList.replace(body.classList.contains('light') ? 'light' : 'dark', newTheme);
+  localStorage.setItem('theme', newTheme);
+});
+
+{% if item.trend %}
+new Chart(document.getElementById('trendChart'), {
+  type: 'line',
+  data: {
+    labels: [...Array({{ item.trend|length }}).keys()],
+    datasets: [{
+      label: 'activity trend',
+      data: [{{ item.trend|join(',') }}],
+      borderColor: 'rgba(79,70,229,0.8)',
+      backgroundColor: 'rgba(79,70,229,0.2)',
+      tension: 0.4,
+      fill: true,
+      pointRadius: 0
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false }, tooltip: { enabled: true } },
+    scales: { x: { display: false }, y: { display: false } },
+    elements: { line: { borderWidth: 2 } }
+  }
+});
+{% endif %}
+</script>
+</body>
+</html>
