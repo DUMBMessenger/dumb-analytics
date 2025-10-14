@@ -3,87 +3,87 @@ from typing import Optional, List, Dict, Any
 
 
 class CpuInfo(BaseModel):
-    name: Optional[str] = None
-    cores: Optional[int] = None
-    threads: Optional[int] = None
-    freq: Optional[float] = None
+    name: Optional[str] = "anonymized"
+    cores: Optional[int] = "anonymized"
+    threads: Optional[int] = "anonymized"
+    freq: Optional[float] = "anonymized"
 
 
 class RamInfo(BaseModel):
-    total: Optional[int] = None
-    used: Optional[int] = None
-    available: Optional[int] = None
+    total: Optional[int] = "anonymized"
+    used: Optional[int] = "anonymized"
+    available: Optional[int] = "anonymized"
 
 
 class DiskEntry(BaseModel):
-    mount: Optional[str] = None
-    total: Optional[int] = None
-    free: Optional[int] = None
+    mount: Optional[str] = "anonymized"
+    total: Optional[int] = "anonymized"
+    free: Optional[int] = "anonymized"
 
 
 class DisplayInfo(BaseModel):
-    resolution: Optional[str] = None
-    refresh_rate: Optional[int] = None
-    dpi: Optional[int] = None
-    monitor_count: Optional[int] = None
+    resolution: Optional[str] = "anonymized"
+    refresh_rate: Optional[int] = "anonymized"
+    dpi: Optional[int] = "anonymized"
+    monitor_count: Optional[int] = "anonymized"
 
 
 class BiosInfo(BaseModel):
-    vendor: Optional[str] = None
-    version: Optional[str] = None
-    date: Optional[str] = None
+    vendor: Optional[str] = "anonymized"
+    version: Optional[str] = "anonymized"
+    date: Optional[str] = "anonymized"
 
 
 class BaseTelemetry(BaseModel):
     type: str = Field(..., pattern=r"^(pc|android|web)$")
     device_id: str
-    timestamp: Optional[float] = None
-    os_name: Optional[str] = None
-    os_version: Optional[str] = None
-    kernel_version: Optional[str] = None
-    hostname: Optional[str] = None
-    uptime: Optional[float] = None
-    timezone: Optional[str] = None
-    locale: Optional[str] = None
-    cpu: Optional[CpuInfo] = None
-    ram: Optional[RamInfo] = None
-    disks: Optional[List[DiskEntry]] = None
-    display: Optional[DisplayInfo] = None
-    gpu_name: Optional[str] = None
-    gpu_vram: Optional[int] = None
-    gpu_driver: Optional[str] = None
-    bios: Optional[BiosInfo] = None
-    motherboard_model: Optional[str] = None
-    motherboard_vendor: Optional[str] = None
+    timestamp: Optional[float] = "anonymized"
+    os_name: Optional[str] = "anonymized"
+    os_version: Optional[str] = "anonymized"
+    kernel_version: Optional[str] = "anonymized"
+    hostname: Optional[str] = "anonymized"
+    uptime: Optional[float] = "anonymized"
+    timezone: Optional[str] = "anonymized"
+    locale: Optional[str] = "anonymized"
+    cpu: Optional[CpuInfo] = "anonymized"
+    ram: Optional[RamInfo] = "anonymized"
+    disks: Optional[List[DiskEntry]] = "anonymized"
+    display: Optional[DisplayInfo] = "anonymized"
+    gpu_name: Optional[str] = "anonymized"
+    gpu_vram: Optional[int] = "anonymized"
+    gpu_driver: Optional[str] = "anonymized"
+    bios: Optional[BiosInfo] = "anonymized"
+    motherboard_model: Optional[str] = "anonymized"
+    motherboard_vendor: Optional[str] = "anonymized"
 
 
 class AndroidTelemetry(BaseTelemetry):
-    brand: Optional[str] = None
-    manufacturer: Optional[str] = None
-    android_version: Optional[str] = None
-    sdk: Optional[int] = None
-    battery_level: Optional[int] = None
-    charging: Optional[bool] = None
-    rooted: Optional[bool] = None
-    storage: Optional[Dict[str, Any]] = None
+    brand: Optional[str] = "anonymized"
+    manufacturer: Optional[str] = "anonymized"
+    android_version: Optional[str] = "anonymized"
+    sdk: Optional[int] = "anonymized"
+    battery_level: Optional[int] = "anonymized"
+    charging: Optional[bool] = "anonymized"
+    rooted: Optional[bool] = "anonymized"
+    storage: Optional[Dict[str, Any]] = "anonymized"
 
 class WebTelemetry(BaseTelemetry):
-    user_agent: Optional[str] = None
-    platform: Optional[str] = None
-    language: Optional[str] = None
-    languages: Optional[list[str]] = None
-    vendor: Optional[str] = None
-    screen_width: Optional[int] = None
-    screen_height: Optional[int] = None
-    color_depth: Optional[int] = None
-    pixel_ratio: Optional[float] = None
-    timezone_offset: Optional[int] = None
-    performance_memory: Optional[Dict[str, Any]] = None
-    battery_level: Optional[float] = None
-    charging: Optional[bool] = None
-    storage_estimate: Optional[Dict[str, Any]] = None
-    connection: Optional[Dict[str, Any]] = None
-    hardware_concurrency: Optional[int] = None
-    device_memory: Optional[float] = None
-    touch_support: Optional[bool] = None
-    cookie_enabled: Optional[bool] = None
+    user_agent: Optional[str] = "anonymized"
+    platform: Optional[str] = "anonymized"
+    language: Optional[str] = "anonymized"
+    languages: Optional[list[str]] = "anonymized"
+    vendor: Optional[str] = "anonymized"
+    screen_width: Optional[int] = "anonymized"
+    screen_height: Optional[int] = "anonymized"
+    color_depth: Optional[int] = "anonymized"
+    pixel_ratio: Optional[float] = "anonymized"
+    timezone_offset: Optional[int] = "anonymized"
+    performance_memory: Optional[Dict[str, Any]] = "anonymized"
+    battery_level: Optional[float] = "anonymized"
+    charging: Optional[bool] = "anonymized"
+    storage_estimate: Optional[Dict[str, Any]] = "anonymized"
+    connection: Optional[Dict[str, Any]] = "anonymized"
+    hardware_concurrency: Optional[int] = "anonymized"
+    device_memory: Optional[float] = "anonymized"
+    touch_support: Optional[bool] = "anonymized"
+    cookie_enabled: Optional[bool] = "anonymized"
