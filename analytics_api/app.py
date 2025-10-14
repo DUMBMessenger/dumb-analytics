@@ -15,9 +15,8 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,  # Allow cookies, authorization headers, etc.
-    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
-    allow_headers=["*"],  # Allow all headers in the request
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.post('/collect')
@@ -74,5 +73,5 @@ def main():
             port=7634
         )
 
-if __name__ == 'main':
+if __name__ == '__main__':
     main()
