@@ -21,6 +21,9 @@ app.add_middleware(
 
 @app.post('/collect')
 async def collect(req: Request):
+    if req.method != "POST":
+        return {"status": "ok"}
+
     payload = await req.json()
     if 'type' not in payload or 'device_id' not in payload:
         raise HTTPException(status_code=400, detail="type and device_id required")
