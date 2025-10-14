@@ -8,8 +8,17 @@ from fastapi.requests import Request
 from shared import CERT_PEM, KEY_PEM
 from .db import get_conn
 from .models import BaseTelemetry, AndroidTelemetry, WebTelemetry
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,  # Allow cookies, authorization headers, etc.
+    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
+    allow_headers=["*"],  # Allow all headers in the request
+)
 
 @app.post('/collect')
 async def collect(req: Request):
