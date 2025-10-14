@@ -67,7 +67,7 @@ class AndroidTelemetry(BaseTelemetry):
     rooted: Optional[bool] = None
     storage: Optional[Dict[str, Any]] = None
 
-class WebTelemetry(BaseModel):
+class WebTelemetry(BaseTelemetry):
     user_agent: Optional[str] = None
     platform: Optional[str] = None
     language: Optional[str] = None
