@@ -37,7 +37,7 @@ signal.signal(signal.SIGINT, terminate_processes)
 
 commands = [
     "python3 init_db.py",
-    "uvicorn analytics_api.app:app --reload --port 7634",
+    "python3 -m analytics_api",
     "python3 dashboard/app.py"
 ]
 

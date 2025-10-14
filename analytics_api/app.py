@@ -1,8 +1,13 @@
+import json
+import time
+
+import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.requests import Request
-from .models import BaseTelemetry, AndroidTelemetry
+
+from shared import CERT_PEM, KEY_PEM
 from .db import get_conn
-import time, json
+from .models import BaseTelemetry, AndroidTelemetry, WebTelemetry
 
 app = FastAPI()
 
@@ -17,6 +22,8 @@ async def collect(req: Request):
     try:
         if t == 'android':
             obj = AndroidTelemetry(**payload)
+        elif t == 'web':
+            obj = WebTelemetry(**payload)
         else:
             obj = BaseTelemetry(**payload)
     except Exception as e:
@@ -41,3 +48,22 @@ def health():
 @app.get('/')
 def root():
     return {"message": "HELO"}
+
+def main():
+    if KEY_PEM.exists() and CERT_PEM.exists():
+        uvicorn.run(
+            app,
+            host="0.0.0.0",
+            port=7634,
+            ssl_keyfile=KEY_PEM,
+            ssl_certfile=CERT_PEM
+        )
+    else:
+        uvicorn.run(
+            app,
+            host="0.0.0.0",
+            port=7634
+        )
+
+if __name__ == 'main':
+    main()

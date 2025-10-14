@@ -19,6 +19,7 @@ venv/
 *.log
 
 /data/
+/certs_api/
 tmp/
 *.tmp
 *.bak

@@ -35,7 +35,7 @@ class BiosInfo(BaseModel):
 
 
 class BaseTelemetry(BaseModel):
-    type: str = Field(..., pattern=r"^(pc|android)$")
+    type: str = Field(..., pattern=r"^(pc|android|web)$")
     device_id: str
     timestamp: Optional[float] = None
     os_name: Optional[str] = None
@@ -66,3 +66,24 @@ class AndroidTelemetry(BaseTelemetry):
     charging: Optional[bool] = None
     rooted: Optional[bool] = None
     storage: Optional[Dict[str, Any]] = None
+
+class WebTelemetry(BaseModel):
+    user_agent: Optional[str] = None
+    platform: Optional[str] = None
+    language: Optional[str] = None
+    languages: Optional[list[str]] = None
+    vendor: Optional[str] = None
+    screen_width: Optional[int] = None
+    screen_height: Optional[int] = None
+    color_depth: Optional[int] = None
+    pixel_ratio: Optional[float] = None
+    timezone_offset: Optional[int] = None
+    performance_memory: Optional[Dict[str, Any]] = None
+    battery_level: Optional[float] = None
+    charging: Optional[bool] = None
+    storage_estimate: Optional[Dict[str, Any]] = None
+    connection: Optional[Dict[str, Any]] = None
+    hardware_concurrency: Optional[int] = None
+    device_memory: Optional[float] = None
+    touch_support: Optional[bool] = None
+    cookie_enabled: Optional[bool] = None
