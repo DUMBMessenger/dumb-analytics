@@ -1,6 +1,9 @@
+from datetime import datetime
 import os
 import sys
 from pathlib import Path
+from typing import Any
+
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3, json
 from waitress import serve
@@ -9,11 +12,23 @@ from dotenv import load_dotenv
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 load_dotenv()
-from shared import DB_PATH, DB_AUTH_PATH, IS_SETUPED_PATH
+from shared import DB_PATH, DB_AUTH_PATH, IS_SETUPED_PATH, VIEWED_DB_PATH
 
 app = Flask(__name__, template_folder='templates')
 app.secret_key = os.getenv('SECRET_KEY')
 admin_to_all = os.getenv('ADMIN_ACCESS_TO_ALL')
+
+def init_viewed_db():
+    import sqlite3
+    conn = sqlite3.connect(VIEWED_DB_PATH)
+    cur = conn.cursor()
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS viewed (
+            item_id INTEGER PRIMARY KEY
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
 def init_auth_db():
     conn = sqlite3.connect(DB_AUTH_PATH)
@@ -29,8 +44,35 @@ def init_auth_db():
     conn.commit()
     conn.close()
 
-init_auth_db()
+def mark_viewed(item_id: int):
+    import sqlite3
+    conn = sqlite3.connect(VIEWED_DB_PATH)
+    try:
+        conn.execute('INSERT OR IGNORE INTO viewed (item_id) VALUES (?)', (item_id,))
+        conn.commit()
+    finally:
+        conn.close()
 
+def mark_new(item_id: int):
+    import sqlite3
+    conn = sqlite3.connect(VIEWED_DB_PATH)
+    try:
+        conn.execute('DELETE FROM viewed WHERE item_id = ?', (item_id,))
+        conn.commit()
+    finally:
+        conn.close()
+
+def get_viewed_ids() -> set[Any] | None:
+    import sqlite3
+    conn = sqlite3.connect(VIEWED_DB_PATH)
+    try:
+        rows = conn.execute('SELECT item_id FROM viewed').fetchall()
+        return {r[0] for r in rows}
+    finally:
+        conn.close()
+
+init_auth_db()
+init_viewed_db()
 
 def get_user(username):
     conn = sqlite3.connect(DB_AUTH_PATH)
@@ -113,9 +155,13 @@ def admin_required(f):
 def index():
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
+
     counts = {r[0]: r[1] for r in cur.execute('SELECT type, COUNT(*) FROM telemetry GROUP BY type')}
-    rows = cur.execute('SELECT id, timestamp, type, device_id, data FROM telemetry ORDER BY timestamp DESC LIMIT 100').fetchall()
-    conn.close()
+
+    rows = cur.execute(
+        'SELECT id, timestamp, type, device_id, data FROM telemetry ORDER BY timestamp DESC LIMIT 100').fetchall()
+
+    viewed_ids = get_viewed_ids()
 
     items = []
     for r in rows:
@@ -123,12 +169,35 @@ def index():
             data = json.loads(r[4])
         except:
             data = {}
-        items.append({
-            'id': r[0], 'timestamp': r[1], 'type': r[2], 'device_id': r[3], 'data': data
-        })
 
+        item = {
+            'id': r[0],
+            'timestamp': r[1],
+            'type': r[2],
+            'device_id': r[3],
+            'data': data,
+            'viewed': r[0] in viewed_ids
+        }
+
+        N = 5
+        trend_rows = cur.execute(
+            'SELECT data FROM telemetry WHERE device_id=? ORDER BY timestamp DESC LIMIT ?',
+            (r[3], N)
+        ).fetchall()
+
+        trend = []
+        for tr in reversed(trend_rows):
+            try:
+                d = json.loads(tr[0])
+                trend.append(d.get('metric', 0))
+            except:
+                trend.append(0)
+        item['trend'] = trend or list(range(N))
+
+        items.append(item)
+
+    conn.close()
     return render_template('index.html', counts=counts, items=items, is_admin=session.get('is_admin'))
-
 
 @app.route('/inspect/<int:item_id>')
 @login_required
@@ -142,8 +211,23 @@ def inspect_item(item_id):
         data = json.loads(row[4])
     except:
         data = {}
-    return render_template('inspect.html', item={'id': row[0], 'timestamp': row[1], 'type': row[2], 'device_id': row[3], 'data': data})
+    return render_template('inspect.html', item={'id': row[0], 'timestamp': datetime.fromtimestamp(int(row[1])).strftime('%Y-%m-%d %H:%M:%S'), 'type': row[2], 'device_id': row[3], 'data': data})
 
+@app.route('/mark_viewed', methods=['POST'])
+@login_required
+def mark_items_viewed():
+    ids = request.json.get('ids', [])
+    for i in ids:
+        mark_viewed(i)
+    return {'status': 'ok'}
+
+@app.route('/mark_new', methods=['POST'])
+@login_required
+def mark_items_new():
+    ids = request.json.get('ids', [])
+    for i in ids:
+        mark_new(i)
+    return {'status': 'ok'}
 
 @app.route('/admin')
 @login_required

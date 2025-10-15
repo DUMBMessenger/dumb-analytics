@@ -15,7 +15,8 @@
   --primary: #4f46e5;
   --secondary: #6366f1;
   --accent: #10b981;
-  --hover: rgba(0,0,0,0.05);
+  --hover-light: rgba(0,0,0,0.05);
+  --hover-dark: rgba(255,255,255,0.1);
 }
 
 body {
@@ -24,105 +25,156 @@ body {
   transition: background 0.3s, color 0.3s;
 }
 
-body.light { background: var(--bg-light); color: var(--text-light);}
-body.dark { background: var(--bg-dark); color: var(--text-dark);}
+body.light { background: var(--bg-light); color: var(--text-light); }
+body.dark { background: var(--bg-dark); color: var(--text-dark); }
 
 header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 20px;
 }
 
-h1 { margin: 0; font-size: 1.8em;}
+h1 { margin: 0; font-size: 1.8em; }
 
-
-.header-buttons {
-  display: flex;
-  gap: 10px; /* расстояние между кнопками */
-  align-items: center;
+.header-buttons { display: flex; gap: 10px; align-items: center; }
+.header-buttons button, .header-buttons a {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 36px; padding: 0 14px;
+  background: var(--primary); border: none; color: #fff;
+  border-radius: 8px; cursor: pointer; font-weight: bold;
+  text-decoration: none; font-size: 0.9em; transition: all 0.3s;
 }
-
-.header-buttons button,
-.header-buttons a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 36px;       /* фиксированная высота кнопки */
-  padding: 0 14px;    /* только горизонтальные отступы */
-  background: var(--primary);
-  border: none;
-  color: #fff;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  text-decoration: none;
-  line-height: 1;
-  font-size: 0.9em;
-  transition: all 0.3s;
-}
-
-.header-buttons button:hover,
-.header-buttons a:hover {
-  background: var(--secondary);
-  transform: scale(1.05);
+.header-buttons button:hover, .header-buttons a:hover {
+  background: var(--secondary); transform: scale(1.05);
 }
 
 .card {
-  border: none;
-  padding: 20px;
-  border-radius: 14px;
-  margin-bottom: 20px;
+  border: none; padding: 20px; border-radius: 14px; margin-bottom: 20px;
   box-shadow: 0 4px 18px rgba(0,0,0,0.08);
   transition: background 0.3s, color 0.3s, transform 0.2s;
 }
 .card:hover { transform: translateY(-4px); }
+body.light .card { background: var(--card-light); color: var(--text-light); }
+body.dark .card { background: var(--card-dark); color: var(--text-dark); }
 
-body.light .card { background: var(--card-light); color: var(--text-light);}
-body.dark .card { background: var(--card-dark); color: var(--text-dark);}
+.cards-container { display: flex; gap: 20px; flex-wrap: wrap; }
 
-.cards-container {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+table { width: 100%; border-collapse: collapse; border-radius: 12px; overflow: hidden; }
+td, th { padding: 12px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.1); }
+tbody tr:nth-child(even) { background: rgba(0,0,0,0.03); }
+body.dark tbody tr:nth-child(even) { background: rgba(255,255,255,0.05); }
+tbody tr:hover {
+  background: var(--hover-light);
+}
+body.dark tbody tr:hover {
+  background: var(--hover-dark);
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-td, th {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
-}
-
-tbody tr:nth-child(even) { background: rgba(0,0,0,0.03);}
-body.dark tbody tr:nth-child(even) { background: rgba(255,255,255,0.05);}
-tbody tr:hover { background: var(--hover);}
-
-a { color: var(--primary); text-decoration: none;}
+a { color: var(--primary); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-pre { background: rgba(0,0,0,0.05); padding: 10px; border-radius: 8px; overflow-x: auto;}
-body.dark pre { background: rgba(255,255,255,0.1);}
+.filter-bar {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  align-items: center; margin-bottom: 15px;
+}
+.filter-bar input, .filter-bar select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(128,128,128,0.3);
+  background: inherit;
+  color: inherit;
+  font-size: 0.9em;
+  transition: border 0.2s, background 0.2s;
+}
+body.dark .filter-bar select,
+body.dark .filter-bar input {
+  background: #2e2e42;
+  border-color: rgba(255,255,255,0.1);
+  color: #fff;
+}
+.filter-bar select:focus, .filter-bar input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.filter-bar label { display: flex; align-items: center; gap: 6px; font-size: 0.9em; }
+.filter-bar button {
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+.filter-bar button:hover {
+  transform: scale(1.05);
+  background: #0ea372;
+}
 
-@keyframes slideFadeIn {0%{opacity:0;transform:translateY(-10px);}100%{opacity:1;transform:translateY(0);}}
-tbody tr { animation: slideFadeIn 0.5s ease forwards;}
+@keyframes slideFadeIn {
+  0% { opacity: 0; transform: translateY(-10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+tbody tr { animation: slideFadeIn 0.5s ease forwards; }
+
+.tab-btn, #mark-viewed-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+  background: var(--secondary);
+  color: #fff;
+  margin-bottom: 5px
+}
+.tab-btn:hover, #mark-viewed-btn:hover {
+  background: var(--primary);
+  transform: scale(1.05);
+}
+
+#download-csv {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+  background: #10B981;
+  color: #fff;
+}
+#download-csv:hover {
+  background: #1a8663;
+  transform: scale(1.05);
+}
+
+.tab-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.tabs-container {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.cards-container canvas {
+  height: 300px !important;
+  max-height: 500px;
+}
+
 </style>
 </head>
 <body>
 <header>
   <h1>dumb analytics dashboard</h1>
   <div class="header-buttons">
-    <button class="theme-toggle">theme toggle</button>
+    <button class="theme-toggle">toggle theme</button>
     {% if is_admin %}
-      <a href="{{ url_for('admin_panel') }}" class="admin-button">Admin panel</a>
+      <a href="{{ url_for('admin_panel') }}">admin panel</a>
     {% endif %}
-    <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+    <a href="{{ url_for('logout') }}">logout</a>
   </div>
 </header>
 
@@ -137,44 +189,284 @@ tbody tr { animation: slideFadeIn 0.5s ease forwards;}
 </div>
 
 <div class="card">
-<h3>recent</h3>
-<table>
-<thead>
-<tr>
-  <th>id</th>
-  <th>ts</th>
-  <th>type</th>
-  <th>device</th>
-  <th>trend</th>
-  <th>actions</th>
-</tr>
-</thead>
-<tbody>
-{% for it in items %}
-<tr>
-  <td>{{ it.id }}</td>
-  <td>{{ it.timestamp }}</td>
-  <td>{{ it.type }}</td>
-  <td>{{ it.device_id }}</td>
-  <td><canvas id="trend-{{ it.id }}" width="100" height="30"></canvas></td>
-  <td><a href="/inspect/{{ it.id }}">inspect</a></td>
-</tr>
-{% endfor %}
-</tbody>
-</table>
+  <h3>recent data</h3>
+
+  <div class="filter-bar">
+    <input type="text" id="search" placeholder="🔍 search (id, device...)">
+    <select id="sort">
+      <option value="newest">newest first</option>
+      <option value="oldest">oldest first</option>
+    </select>
+    <label><input type="checkbox" id="unique"> distinct devices</label>
+    <button id="clear-filters">clear filters</button>
+    <button id="download-csv">download csv</button>
+  </div>
+
+  <table id="data-table">
+    <thead>
+      <tr>
+        <th><input type="checkbox" id="select-all"></th>
+        <th>id</th>
+        <th>timestamp</th>
+        <th>type</th>
+        <th>device</th>
+        <th>trend</th>
+        <th>actions</th>
+      </tr>
+    </thead>
+    <tbody id="table-body">
+      {% for it in items %}
+      <tr data-id="{{ it.id }}" data-ts="{{ it.timestamp }}" data-type="{{ it.type }}" data-device="{{ it.device_id }}" data-viewed="{{ 'true' if it.viewed else 'false' }}">
+        <td><input type="checkbox" class="row-select"></td>
+        <td>{{ it.id }}</td>
+        <td>{{ it.timestamp }}</td>
+        <td>{{ it.type }}</td>
+        <td>{{ it.device_id }}</td>
+        <td><canvas id="trend-{{ it.id }}" width="100" height="30"></canvas></td>
+        <td><a href="/inspect/{{ it.id }}">inspect</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 
 <script>
 const body = document.body;
 const toggle = document.querySelector('.theme-toggle');
-const savedTheme = localStorage.getItem('theme') || 'light';
+const savedTheme = localStorage.getItem('theme') || 'dark';
 body.classList.add(savedTheme);
-
 toggle.addEventListener('click', () => {
   const newTheme = body.classList.contains('light') ? 'dark' : 'light';
   body.classList.replace(body.classList.contains('light') ? 'light':'dark', newTheme);
   localStorage.setItem('theme', newTheme);
 });
+
+// elements
+const searchInput = document.getElementById('search');
+const sortSelect = document.getElementById('sort');
+const uniqueCheckbox = document.getElementById('unique');
+const clearBtn = document.getElementById('clear-filters');
+const filterBar = document.querySelector('.filter-bar');
+const tbody = document.getElementById('table-body');
+const rows = Array.from(tbody.querySelectorAll('tr'));
+const downloadBtn = document.getElementById('download-csv');
+const savedTab = localStorage.getItem('currentTab');
+
+// type filter
+const typeSelect = document.createElement('select');
+typeSelect.id = 'typeFilter';
+const defaultTypeOption = document.createElement('option');
+defaultTypeOption.value = '';
+defaultTypeOption.textContent = 'all types';
+typeSelect.appendChild(defaultTypeOption);
+Array.from(new Set(rows.map(r=>r.dataset.type))).forEach(t=>{
+  const opt = document.createElement('option'); opt.value = t; opt.textContent=t;
+  typeSelect.appendChild(opt);
+});
+filterBar.insertBefore(typeSelect, uniqueCheckbox.parentElement);
+const selectAll = document.getElementById('select-all');
+selectAll.addEventListener('change', ()=>{
+  const checked = selectAll.checked;
+  rows.forEach(r=>{
+    if(r.style.display !== 'none') r.querySelector('.row-select').checked = checked;
+  });
+});
+
+// viewed tab
+const tabsDiv = document.createElement('div');
+tabsDiv.style.display='flex'; tabsDiv.style.gap='8px'; tabsDiv.style.margin='10px 0';
+const tabs = ['all','new','viewed'];
+let currentTab = 'all';
+tabs.forEach(t=>{
+  const b=document.createElement('button');
+  b.textContent=t;
+  b.className='tab-btn';
+  b.addEventListener('click', ()=>{
+    currentTab = t;
+    localStorage.setItem('currentTab', currentTab);
+    document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));
+    b.classList.add('active');
+    updateMarkButton();
+    updateTable();
+  });
+  tabsDiv.appendChild(b);
+});
+
+filterBar.parentElement.insertBefore(tabsDiv, filterBar.nextSibling);
+
+// mark as viewed button
+const markBtn = document.createElement('button');
+markBtn.textContent='mark as viewed';
+markBtn.style.margin='10px 0';
+filterBar.parentElement.insertBefore(markBtn, filterBar.nextSibling);
+markBtn.id='mark-viewed-btn';
+
+// convert timestamp
+rows.forEach(r=>{
+  const ts=parseInt(r.dataset.ts);
+  const d=new Date(ts*1000);
+  r.querySelector('td:nth-child(3)').textContent=
+    `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+});
+
+// load saved filters
+const savedFilters = JSON.parse(localStorage.getItem('filters')||'{}');
+if(savedFilters.query) searchInput.value=savedFilters.query;
+if(savedFilters.sort) sortSelect.value=savedFilters.sort;
+if(savedFilters.unique) uniqueCheckbox.checked=savedFilters.unique;
+if(savedFilters.type) typeSelect.value=savedFilters.type;
+
+// save filters
+function saveFilters(){
+  localStorage.setItem('filters', JSON.stringify({
+    query: searchInput.value,
+    sort: sortSelect.value,
+    unique: uniqueCheckbox.checked,
+    type: typeSelect.value
+  }));
+}
+
+// update table
+function updateTable(){
+  const query=searchInput.value.toLowerCase();
+  const sort=sortSelect.value;
+  const unique=uniqueCheckbox.checked;
+  const type=typeSelect.value;
+
+  saveFilters();
+
+  let filtered = [...rows];
+
+  // search
+  filtered=filtered.filter(r=>r.dataset.id.toLowerCase().includes(query)||r.dataset.device.toLowerCase().includes(query));
+
+  // type filter
+  if(type) filtered=filtered.filter(r=>r.dataset.type===type);
+
+  // viewed filter
+  if(currentTab==='new') filtered=filtered.filter(r=>!r.dataset.viewed || r.dataset.viewed==='false');
+  if(currentTab==='viewed') filtered=filtered.filter(r=>r.dataset.viewed==='true');
+
+  // unique devices
+  if(unique){
+    const seen=new Set();
+    filtered=filtered.filter(r=>{ if(seen.has(r.dataset.device)) return false; seen.add(r.dataset.device); return true; });
+  }
+
+  // sort
+  filtered.sort((a,b)=>{
+    const ta=parseInt(a.dataset.ts);
+    const tb=parseInt(b.dataset.ts);
+    return sort==='newest'?tb-ta:ta-tb;
+  });
+
+  rows.forEach(r=>r.style.display='none');
+  const frag=document.createDocumentFragment();
+  filtered.forEach(r=>{ r.style.display=''; frag.appendChild(r); });
+  tbody.appendChild(frag);
+}
+
+// clear filters
+function clearFilters(){
+  searchInput.value=''; sortSelect.value='newest'; uniqueCheckbox.checked=false; typeSelect.value='';
+  updateTable();
+}
+
+[searchInput, sortSelect, uniqueCheckbox, typeSelect].forEach(el=>el.addEventListener('input',updateTable));
+clearBtn.addEventListener('click',clearFilters);
+
+// mark button (viewed / new)
+async function markSelected(asNew=false){
+  const selectedRows = rows.filter(r=>r.querySelector('.row-select').checked && r.style.display !== 'none');
+  const ids = selectedRows.map(r=>parseInt(r.dataset.id));
+  if(ids.length===0) return;
+
+  const url = asNew ? '/mark_new' : '/mark_viewed';
+  const resp = await fetch(url,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ids})
+  });
+
+  if(resp.ok){
+    selectedRows.forEach(r=>{
+      r.dataset.viewed = asNew ? 'false' : 'true';
+      r.querySelector('.row-select').checked = false;
+    });
+    selectAll.checked = false;
+
+    updateMarkButton();
+    updateTable();
+  }
+}
+
+markBtn.addEventListener('click', ()=>markSelected(false));
+
+function updateMarkButton(){
+  if(currentTab==='viewed'){
+    markBtn.textContent='mark as new';
+    markBtn.onclick = ()=>markSelected(true);
+    markBtn.style.display = 'block';
+  } else if (currentTab==='all') {
+    markBtn.style.display = 'none';
+  } else {
+    markBtn.textContent='mark as viewed';
+    markBtn.onclick = ()=>markSelected(false);
+    markBtn.style.display = 'block';
+  }
+}
+
+tabs.forEach((t,i)=>{
+  const b = tabsDiv.children[i];
+  b.addEventListener('click', ()=>{
+    currentTab = t;
+    document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));
+    b.classList.add('active');
+    updateMarkButton();
+    updateTable();
+  });
+});
+
+function downloadCSV(){
+  const visibleRows = rows.filter(r => r.style.display !== 'none');
+  if(visibleRows.length === 0) return alert('no data');
+
+  const headers = ['id','timestamp','type','device','trend','viewed'];
+  const csv = [
+    headers.join(','),
+    ...visibleRows.map(r => {
+      const id = r.dataset.id;
+      const ts = r.dataset.ts;
+      const type = r.dataset.type;
+      const device = r.dataset.device;
+      const trendCanvas = r.querySelector('canvas');
+      const trend = trendCanvas?.dataset.trend || '';
+      const viewed = r.dataset.viewed;
+      return [id, ts, type, device, `"${trend}"`, viewed].join(',');
+    })
+  ].join('\n');
+
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'data.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+downloadBtn.addEventListener('click', downloadCSV);
+updateMarkButton();
+updateTable();
+setInterval(()=>location.reload(),60000);
+if(savedTab){
+  currentTab = savedTab;
+  Array.from(tabsDiv.children).forEach(btn=>{
+    btn.classList.toggle('active', btn.textContent === savedTab);
+  });
+  updateMarkButton();
+  updateTable();
+}
 
 {% for key, value in counts.items() %}
 new Chart(document.getElementById('chart-{{ key }}'), {
@@ -191,6 +483,7 @@ new Chart(document.getElementById('chart-{{ key }}'), {
     },
     options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: { legend: { display: false }, tooltip:{enabled:true} },
         scales: { x:{display:false}, y:{display:false} }
     }
@@ -219,9 +512,6 @@ new Chart(document.getElementById('trend-{{ it.id }}'), {
     }
 });
 {% endfor %}
-
-// авто-рефреш каждые 60с
-setInterval(()=>location.reload(),60000);
 </script>
 </body>
 </html>

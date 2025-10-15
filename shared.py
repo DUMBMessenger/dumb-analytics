@@ -5,6 +5,7 @@ BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / "data"
 DB_PATH = DATA_DIR / "analytics.db"
 DB_AUTH_PATH = DATA_DIR / "authorization.db"
+VIEWED_DB_PATH = DATA_DIR / "viewed.db"
 IS_SETUPED_PATH = DATA_DIR / "setup.lock"
 
 CERTS_DIR = BASE_DIR / "certs_api"

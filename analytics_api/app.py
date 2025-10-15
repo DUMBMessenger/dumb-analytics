@@ -7,7 +7,7 @@ from fastapi.requests import Request
 
 from shared import CERT_PEM, KEY_PEM
 from .db import get_conn
-from .models import BaseTelemetry, AndroidTelemetry, WebTelemetry
+from .models import BaseTelemetry, AndroidTelemetry, WebTelemetry, PCTelemetry
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -35,6 +35,8 @@ async def collect(req: Request):
             obj = AndroidTelemetry(**payload)
         elif t == 'web':
             obj = WebTelemetry(**payload)
+        elif t == 'pc':
+            obj = PCTelemetry(**payload)
         else:
             obj = BaseTelemetry(**payload)
     except Exception as e:
