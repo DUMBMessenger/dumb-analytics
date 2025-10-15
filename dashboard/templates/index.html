@@ -231,296 +231,304 @@ tbody tr { animation: slideFadeIn 0.5s ease forwards; }
 </div>
 
 <script>
-const charts = {};
+const charts = {}
 
-const body = document.body;
-const toggle = document.querySelector('.theme-toggle');
-const savedTheme = localStorage.getItem('theme') || 'dark';
-body.classList.add(savedTheme);
+const body = document.body
+const toggle = document.querySelector('.theme-toggle')
+const savedTheme = localStorage.getItem('theme') || 'dark'
+body.classList.add(savedTheme)
+
 toggle.addEventListener('click', () => {
-  const newTheme = body.classList.contains('light') ? 'dark' : 'light';
-  body.classList.replace(body.classList.contains('light') ? 'light':'dark', newTheme);
-  localStorage.setItem('theme', newTheme);
-});
+  const newTheme = body.classList.contains('light') ? 'dark' : 'light'
+  body.classList.replace(body.classList.contains('light') ? 'light' : 'dark', newTheme)
+  localStorage.setItem('theme', newTheme)
+})
 
-// elements
-const searchInput = document.getElementById('search');
-const sortSelect = document.getElementById('sort');
-const uniqueCheckbox = document.getElementById('unique');
-const clearBtn = document.getElementById('clear-filters');
-const filterBar = document.querySelector('.filter-bar');
-const tbody = document.getElementById('table-body');
-const rows = Array.from(tbody.querySelectorAll('tr'));
-const downloadBtn = document.getElementById('download-csv');
-const savedTab = localStorage.getItem('currentTab');
+const searchInput = document.getElementById('search')
+const sortSelect = document.getElementById('sort')
+const uniqueCheckbox = document.getElementById('unique')
+const clearBtn = document.getElementById('clear-filters')
+const filterBar = document.querySelector('.filter-bar')
+const tbody = document.getElementById('table-body')
+const rows = Array.from(tbody.querySelectorAll('tr'))
+const downloadBtn = document.getElementById('download-csv')
+const savedTab = localStorage.getItem('currentTab')
 
 // type filter
-const typeSelect = document.createElement('select');
-typeSelect.id = 'typeFilter';
-const defaultTypeOption = document.createElement('option');
-defaultTypeOption.value = '';
-defaultTypeOption.textContent = 'all types';
-typeSelect.appendChild(defaultTypeOption);
-Array.from(new Set(rows.map(r=>r.dataset.type))).forEach(t=>{
-  const opt = document.createElement('option'); opt.value = t; opt.textContent=t;
-  typeSelect.appendChild(opt);
-});
-filterBar.insertBefore(typeSelect, uniqueCheckbox.parentElement);
-const selectAll = document.getElementById('select-all');
-selectAll.addEventListener('change', ()=>{
-  const checked = selectAll.checked;
-  rows.forEach(r=>{
-    if(r.style.display !== 'none') r.querySelector('.row-select').checked = checked;
-  });
-});
+const typeSelect = document.createElement('select')
+typeSelect.id = 'typeFilter'
+const defaultTypeOption = document.createElement('option')
+defaultTypeOption.value = ''
+defaultTypeOption.textContent = 'all types'
+typeSelect.appendChild(defaultTypeOption)
 
-// viewed tab
-const tabsDiv = document.createElement('div');
-tabsDiv.style.display='flex'; tabsDiv.style.gap='8px'; tabsDiv.style.margin='10px 0';
-const tabs = ['all','new','viewed'];
-let currentTab = 'all';
-tabs.forEach(t=>{
-  const b=document.createElement('button');
-  b.textContent=t;
-  b.className='tab-btn';
-  b.addEventListener('click', ()=>{
-    currentTab = t;
-    localStorage.setItem('currentTab', currentTab);
-    document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));
-    b.classList.add('active');
-    updateMarkButton();
-    updateTable();
-  });
-  tabsDiv.appendChild(b);
-});
+Array.from(new Set(rows.map(r => r.dataset.type))).forEach(t => {
+  const opt = document.createElement('option')
+  opt.value = t
+  opt.textContent = t
+  typeSelect.appendChild(opt)
+})
+filterBar.insertBefore(typeSelect, uniqueCheckbox.parentElement)
 
-filterBar.parentElement.insertBefore(tabsDiv, filterBar.nextSibling);
+const selectAll = document.getElementById('select-all')
+selectAll.addEventListener('change', () => {
+  const checked = selectAll.checked
+  rows.forEach(r => {
+    if (r.style.display !== 'none') r.querySelector('.row-select').checked = checked
+  })
+})
+
+// tabs for viewed / new
+const tabsDiv = document.createElement('div')
+tabsDiv.style.display = 'flex'
+tabsDiv.style.gap = '8px'
+tabsDiv.style.margin = '10px 0'
+
+const tabs = ['all', 'new', 'viewed']
+let currentTab = 'all'
+
+tabs.forEach(t => {
+  const b = document.createElement('button')
+  b.textContent = t
+  b.className = 'tab-btn'
+  b.addEventListener('click', () => {
+    currentTab = t
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'))
+    b.classList.add('active')
+    updateMarkButton()
+    updateTable()
+  })
+  tabsDiv.appendChild(b)
+})
+filterBar.parentElement.insertBefore(tabsDiv, filterBar.nextSibling)
 
 // mark as viewed button
-const markBtn = document.createElement('button');
-markBtn.textContent='mark as viewed';
-markBtn.style.margin='10px 0';
-filterBar.parentElement.insertBefore(markBtn, filterBar.nextSibling);
-markBtn.id='mark-viewed-btn';
+const markBtn = document.createElement('button')
+markBtn.textContent = 'mark as viewed'
+markBtn.style.margin = '10px 0'
+markBtn.id = 'mark-viewed-btn'
+filterBar.parentElement.insertBefore(markBtn, filterBar.nextSibling)
 
 // convert timestamp
-rows.forEach(r=>{
-  const ts=parseInt(r.dataset.ts);
-  const d=new Date(ts*1000);
-  r.querySelector('td:nth-child(3)').textContent=
-    `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
-});
+rows.forEach(r => {
+  const ts = parseInt(r.dataset.ts)
+  const d = new Date(ts * 1000)
+  r.querySelector('td:nth-child(3)').textContent =
+    `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ` +
+    `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`
+})
 
 // load saved filters
-const savedFilters = JSON.parse(localStorage.getItem('filters')||'{}');
-if(savedFilters.query) searchInput.value=savedFilters.query;
-if(savedFilters.sort) sortSelect.value=savedFilters.sort;
-if(savedFilters.unique) uniqueCheckbox.checked=savedFilters.unique;
-if(savedFilters.type) typeSelect.value=savedFilters.type;
+const savedFilters = JSON.parse(localStorage.getItem('filters') || '{}')
+if (savedFilters.query) searchInput.value = savedFilters.query
+if (savedFilters.sort) sortSelect.value = savedFilters.sort
+if (savedFilters.unique) uniqueCheckbox.checked = savedFilters.unique
+if (savedFilters.type) typeSelect.value = savedFilters.type
 
-// save filters
-function saveFilters(){
+function saveFilters() {
   localStorage.setItem('filters', JSON.stringify({
     query: searchInput.value,
     sort: sortSelect.value,
     unique: uniqueCheckbox.checked,
     type: typeSelect.value
-  }));
+  }))
 }
 
-// update table
-function updateTable(){
-  const query=searchInput.value.toLowerCase();
-  const sort=sortSelect.value;
-  const unique=uniqueCheckbox.checked;
-  const type=typeSelect.value;
+function updateTable() {
+  const query = searchInput.value.toLowerCase()
+  const sort = sortSelect.value
+  const unique = uniqueCheckbox.checked
+  const type = typeSelect.value
 
-  saveFilters();
+  saveFilters()
 
-  let filtered = [...rows];
+  let filtered = [...rows]
 
-  // search
-  filtered=filtered.filter(r=>r.dataset.id.toLowerCase().includes(query)||r.dataset.device.toLowerCase().includes(query));
+  filtered = filtered.filter(r => r.dataset.id.toLowerCase().includes(query) || r.dataset.device.toLowerCase().includes(query))
 
-  // type filter
-  if(type) filtered=filtered.filter(r=>r.dataset.type===type);
+  if (type) filtered = filtered.filter(r => r.dataset.type == type)
 
-  // viewed filter
-  if(currentTab==='new') filtered=filtered.filter(r=>!r.dataset.viewed || r.dataset.viewed==='false');
-  if(currentTab==='viewed') filtered=filtered.filter(r=>r.dataset.viewed==='true');
+  if (currentTab == 'new') filtered = filtered.filter(r => !r.dataset.viewed || r.dataset.viewed == 'false')
+  if (currentTab == 'viewed') filtered = filtered.filter(r => r.dataset.viewed == 'true')
 
-  // unique devices
-  if(unique){
-    const seen=new Set();
-    filtered=filtered.filter(r=>{ if(seen.has(r.dataset.device)) return false; seen.add(r.dataset.device); return true; });
+  if (unique) {
+    const seen = new Set()
+    filtered = filtered.filter(r => {
+      if (seen.has(r.dataset.device)) return false
+      seen.add(r.dataset.device)
+      return true
+    })
   }
 
-  // sort
-  filtered.sort((a,b)=>{
-    const ta=parseInt(a.dataset.ts);
-    const tb=parseInt(b.dataset.ts);
-    return sort==='newest'?tb-ta:ta-tb;
-  });
+  filtered.sort((a, b) => {
+    const ta = parseInt(a.dataset.ts)
+    const tb = parseInt(b.dataset.ts)
+    return sort == 'newest' ? tb - ta : ta - tb
+  })
 
-  rows.forEach(r=>r.style.display='none');
-  const frag=document.createDocumentFragment();
-  filtered.forEach(r=>{ r.style.display=''; frag.appendChild(r); });
-  tbody.appendChild(frag);
+  rows.forEach(r => r.style.display = 'none')
+  const frag = document.createDocumentFragment()
+  filtered.forEach(r => { r.style.display = ''; frag.appendChild(r) })
+  tbody.appendChild(frag)
 }
 
-// clear filters
-function clearFilters(){
-  searchInput.value=''; sortSelect.value='newest'; uniqueCheckbox.checked=false; typeSelect.value='';
-  updateTable();
+function clearFilters() {
+  searchInput.value = ''
+  sortSelect.value = 'newest'
+  uniqueCheckbox.checked = false
+  typeSelect.value = ''
+  updateTable()
 }
 
-[searchInput, sortSelect, uniqueCheckbox, typeSelect].forEach(el=>el.addEventListener('input',updateTable));
-clearBtn.addEventListener('click',clearFilters);
+;[searchInput, sortSelect, uniqueCheckbox, typeSelect].forEach(el => el.addEventListener('input', updateTable))
+clearBtn.addEventListener('click', clearFilters)
 
-// mark button (viewed / new)
-async function markSelected(asNew=false){
-  const selectedRows = rows.filter(r=>r.querySelector('.row-select').checked && r.style.display !== 'none');
-  const ids = selectedRows.map(r=>parseInt(r.dataset.id));
-  if(ids.length===0) return;
+async function markSelected() {
+  if (currentTab == 'all') return
 
-  const url = asNew ? '/mark_new' : '/mark_viewed';
-  const resp = await fetch(url,{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ids})
-  });
+  const asNew = currentTab == 'viewed'
+  const selectedRows = rows.filter(r => r.querySelector('.row-select').checked && r.style.display != 'none')
+  const ids = selectedRows.map(r => parseInt(r.dataset.id))
+  if (!ids.length) return
 
-  if(resp.ok){
-    selectedRows.forEach(r=>{
-      r.dataset.viewed = asNew ? 'false' : 'true';
-      r.querySelector('.row-select').checked = false;
-    });
-    selectAll.checked = false;
+  const url = asNew ? '/mark_new' : '/mark_viewed'
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids })
+  })
 
-    updateMarkButton();
-    updateTable();
-  }
+  if (!resp.ok) return
+
+  selectedRows.forEach(r => {
+    r.dataset.viewed = asNew ? 'false' : 'true'
+    r.querySelector('.row-select').checked = false
+  })
+  selectAll.checked = false
+  updateTable()
+  updateMarkButton()
 }
 
-markBtn.addEventListener('click', ()=>markSelected(false));
+markBtn.addEventListener('click', markSelected)
 
-function updateMarkButton(){
-  if(currentTab==='viewed'){
-    markBtn.textContent='mark as new';
-    markBtn.onclick = ()=>markSelected(true);
-    markBtn.style.display = 'block';
-  } else if (currentTab==='all') {
-    markBtn.style.display = 'none';
+function updateMarkButton() {
+  if (currentTab == 'viewed') {
+    markBtn.textContent = 'mark as new'
+    markBtn.onclick = () => markSelected(true)
+    markBtn.style.display = 'block'
+  } else if (currentTab == 'all') {
+    markBtn.style.display = 'none'
   } else {
-    markBtn.textContent='mark as viewed';
-    markBtn.onclick = ()=>markSelected(false);
-    markBtn.style.display = 'block';
+    markBtn.textContent = 'mark as viewed'
+    markBtn.onclick = () => markSelected(false)
+    markBtn.style.display = 'block'
   }
 }
 
-tabs.forEach((t,i)=>{
-  const b = tabsDiv.children[i];
-  b.addEventListener('click', ()=>{
-    currentTab = t;
-    document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));
-    b.classList.add('active');
-    updateMarkButton();
-    updateTable();
-  });
-});
+tabs.forEach((t, i) => {
+  const b = tabsDiv.children[i]
+  b.addEventListener('click', () => {
+    currentTab = t
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'))
+    b.classList.add('active')
+    updateMarkButton()
+    updateTable()
+  })
+})
 
-function downloadCSV(){
-  const visibleRows = rows.filter(r => r.style.display !== 'none');
-  if(visibleRows.length === 0) return alert('no data');
+function downloadCSV() {
+  const visibleRows = rows.filter(r => r.style.display != 'none')
+  if (!visibleRows.length) return alert('no data')
 
-  const headers = ['id','timestamp','type','device','trend','viewed'];
+  const headers = ['id', 'timestamp', 'type', 'device', 'trend', 'viewed']
   const csv = [
     headers.join(','),
     ...visibleRows.map(r => {
-      const id = r.dataset.id;
-      const ts = r.dataset.ts;
-      const type = r.dataset.type;
-      const device = r.dataset.device;
-      const trendCanvas = r.querySelector('canvas');
-      const trend = trendCanvas?.dataset.trend || '';
-      const viewed = r.dataset.viewed;
-      return [id, ts, type, device, `"${trend}"`, viewed].join(',');
+      const id = r.dataset.id
+      const ts = r.dataset.ts
+      const type = r.dataset.type
+      const device = r.dataset.device
+      const trendCanvas = r.querySelector('canvas')
+      const trend = trendCanvas?.dataset.trend || ''
+      const viewed = r.dataset.viewed
+      return [id, ts, type, device, `"${trend}"`, viewed].join(',')
     })
-  ].join('\n');
+  ].join('\n')
 
-  const blob = new Blob([csv], {type:'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'data.csv';
-  a.click();
-  URL.revokeObjectURL(url);
+  const blob = new Blob([csv], { type: 'text/csv' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'data.csv'
+  a.click()
+  URL.revokeObjectURL(url)
 }
 
-downloadBtn.addEventListener('click', downloadCSV);
-updateMarkButton();
-updateTable();
-setInterval(()=>location.reload(),60000);
-if(savedTab){
-  currentTab = savedTab;
-  Array.from(tabsDiv.children).forEach(btn=>{
-    btn.classList.toggle('active', btn.textContent === savedTab);
-  });
-  updateMarkButton();
-  updateTable();
+downloadBtn.addEventListener('click', downloadCSV)
+
+updateMarkButton()
+updateTable()
+
+if (savedTab) {
+  currentTab = savedTab
+  Array.from(tabsDiv.children).forEach(btn => {
+    btn.classList.toggle('active', btn.textContent == savedTab)
+  })
+  updateMarkButton()
+  updateTable()
 }
 
 function createChart(id, config) {
-    if (charts[id]) {
-        charts[id].destroy();
-    }
-    const ctx = document.getElementById(id);
-    charts[id] = new Chart(ctx, config);
+  if (charts[id]) charts[id].destroy()
+  const ctx = document.getElementById(id)
+  charts[id] = new Chart(ctx, config)
 }
 
+// render main charts
 {% for key, value in counts.items() %}
 createChart('chart-{{ key }}', {
-    type: 'bar',
-    data: {
-        labels: [''],
-        datasets: [{
-            label: '{{ key }}',
-            data: [{{ value }}],
-            backgroundColor: 'rgba(79,70,229,0.7)',
-            borderRadius: 6,
-            barThickness: 24
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false }, tooltip:{enabled:true} },
-        scales: { x:{display:false}, y:{display:false} }
-    }
-});
+  type: 'bar',
+  data: {
+    labels: [''],
+    datasets: [{
+      label: '{{ key }}',
+      data: [{{ value }}],
+      backgroundColor: 'rgba(79,70,229,0.7)',
+      borderRadius: 6,
+      barThickness: 24
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { enabled: true } },
+    scales: { x: { display: false }, y: { display: false } }
+  }
+})
 {% endfor %}
 
+// render trend charts
 {% for it in items %}
 createChart('trend-{{ it.id }}', {
-    type: 'line',
-    data: {
-        labels: [1,2,3,4,5],
-        datasets: [{
-            data: [{{ it.trend|join(',') if it.trend else "0,1,2,1,0" }}],
-            borderColor: 'rgba(79,70,229,0.8)',
-            backgroundColor: 'rgba(79,70,229,0.2)',
-            tension: 0.4,
-            fill: true,
-            pointRadius: 0
-        }]
-    },
-    options: {
-        responsive: false,
-        plugins: { legend: { display: false }, tooltip:{enabled:true} },
-        scales: { x:{display:false}, y:{display:false} },
-        elements: { line:{borderWidth:2} }
-    }
-});
+  type: 'line',
+  data: {
+    labels: [1, 2, 3, 4, 5],
+    datasets: [{
+      data: [{{ it.trend|join(',') if it.trend else "0,1,2,1,0" }}],
+      borderColor: 'rgba(79,70,229,0.8)',
+      backgroundColor: 'rgba(79,70,229,0.2)',
+      tension: 0.4,
+      fill: true,
+      pointRadius: 0
+    }]
+  },
+  options: {
+    responsive: false,
+    plugins: { legend: { display: false }, tooltip: { enabled: true } },
+    scales: { x: { display: false }, y: { display: false } },
+    elements: { line: { borderWidth: 2 } }
+  }
+})
 {% endfor %}
 </script>
 </body>
