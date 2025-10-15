@@ -231,6 +231,8 @@ tbody tr { animation: slideFadeIn 0.5s ease forwards; }
 </div>
 
 <script>
+const charts = {};
+
 const body = document.body;
 const toggle = document.querySelector('.theme-toggle');
 const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -468,8 +470,16 @@ if(savedTab){
   updateTable();
 }
 
+function createChart(id, config) {
+    if (charts[id]) {
+        charts[id].destroy();
+    }
+    const ctx = document.getElementById(id);
+    charts[id] = new Chart(ctx, config);
+}
+
 {% for key, value in counts.items() %}
-new Chart(document.getElementById('chart-{{ key }}'), {
+createChart('chart-{{ key }}', {
     type: 'bar',
     data: {
         labels: [''],
@@ -491,7 +501,7 @@ new Chart(document.getElementById('chart-{{ key }}'), {
 {% endfor %}
 
 {% for it in items %}
-new Chart(document.getElementById('trend-{{ it.id }}'), {
+createChart('trend-{{ it.id }}', {
     type: 'line',
     data: {
         labels: [1,2,3,4,5],
