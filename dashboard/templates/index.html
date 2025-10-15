@@ -158,12 +158,6 @@ tbody tr { animation: slideFadeIn 0.5s ease forwards; }
   gap: 8px;
   margin: 10px 0;
 }
-
-.cards-container canvas {
-  height: 300px !important;
-  max-height: 500px;
-}
-
 </style>
 </head>
 <body>
@@ -500,7 +494,6 @@ createChart('chart-{{ key }}', {
   },
   options: {
     responsive: true,
-    maintainAspectRatio: false,
     plugins: { legend: { display: false }, tooltip: { enabled: true } },
     scales: { x: { display: false }, y: { display: false } }
   }
